@@ -29,7 +29,6 @@ def run_first_stage(image, net, scale, threshold):
     img = image.resize((sw, sh), Image.BILINEAR)
     img = np.asarray(img, 'float32')
 
-    #img = Variable(torch.FloatTensor(_preprocess(img)), volatile=True)
     img = torch.FloatTensor(_preprocess(img)).to(device)
     output = net(img)
     probs = output[1].cpu().data.numpy()[0, 1, :, :]

@@ -14,7 +14,7 @@ from utils import load_facebank, draw_box_name, prepare_facebank
 import numpy as np
 import traceback
 import sys, os
-
+from time import time
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='for face verification')
     parser.add_argument("-s", "--save", help="whether save",action="store_true")
@@ -61,9 +61,12 @@ if __name__ == '__main__':
         video_writer = cv2.VideoWriter(str(conf.data_path)+'/resultado.avi', cv2.VideoWriter_fourcc(*'XVID'), 6, (1280,720))
         # frame rate 6 due to my laptop is quite slow...
     while cap.isOpened():
+        ilerframe = time()
         isSuccess,frame = cap.read()
+        flerframe = time()
         if isSuccess:            
             try:
+                iidentificarface = time()
                 if args.face_identified=='yolov3':
 
                     image = frame
@@ -88,18 +91,28 @@ if __name__ == '__main__':
                 bboxes = bboxes[:,:-1] #shape:[10,4],only keep 10 highest possibiity faces
                 bboxes = bboxes.astype(int)
                 bboxes = bboxes + [-1,-1,1,1] # personal choice
+                fidentificarface = time()
 
+                iclassificarface = time()
                 results, score = learner.infer(conf, faces, targets, args.tta)
-                
+                fclassificarface = time()
                 #print(bboxes)
                 #opencvImage = cv2.cvtColor(np.array(faces), cv2.COLOR_RGB2BGR)
                 #cv2.imshow("Crop face",opencvImage);
-
+                idesenharbox = time()
                 for idx,bbox in enumerate(bboxes):
                     if args.score:
                         frame = draw_box_name(bbox, names[results[idx] + 1] + '_{:.2f}'.format(score[idx]), frame)
                     else:
                         frame = draw_box_name(bbox, names[results[idx] + 1], frame)
+                fdesenharbox = time()
+
+                #analise de tempo ----------------------------
+                lf = flerframe- ilerframe
+                idf = fidentificarface - iidentificarface
+                classface = fclassificarface - iclassificarface
+                total = fdesenharbox -ilerframe
+                print("Analise: LerFrame %.4f IdentificarFace %.4f ClassificarFace %.4f TimePerFrame %.4f"%(lf,idf,classface,total))
             except:
                 print(traceback.format_exc())
                 

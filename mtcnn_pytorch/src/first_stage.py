@@ -5,7 +5,6 @@ from PIL import Image
 import numpy as np
 from .box_utils import nms, _preprocess
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-# device = 'cpu'
 
 def run_first_stage(image, net, scale, threshold):
     """Run P-Net, generate bounding boxes, and do NMS.
@@ -43,6 +42,7 @@ def run_first_stage(image, net, scale, threshold):
             return None
 
         keep = nms(boxes[:, 0:5], overlap_threshold=0.5)
+    
     return boxes[keep]
 
 
