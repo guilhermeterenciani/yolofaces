@@ -1,0 +1,2 @@
+rtsp://before:beforeti@192.168.1.132:554/live/ch0
+rtsp://admin:cameraip123@10.87.10.17:554/live/ch0
